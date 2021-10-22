@@ -13,9 +13,9 @@ steps:
       from_secret: discord_token
   volumes:
   - name: cache
-    path: /app/out
+    path: /cache
 
-- name: upload
+- name: upload-json
   image: plugins/s3
   settings:
     bucket: discord-exporter
@@ -24,7 +24,24 @@ steps:
     secret_key:
       from_secret: secret_key
     source: /cache/*
-    target: /drone
+    target: /
+    strip_prefix: /cache/
+    endpoint: http://minio.minio.svc.cluster.local:9000
+    path_style: true
+  volumes:
+  - name: cache
+    path: /cache
+
+- name: upload-media
+  image: plugins/s3
+  settings:
+    bucket: discord-exporter
+    access_key:
+      from_secret: access_key
+    secret_key:
+      from_secret: secret_key
+    source: /cache/**/*
+    target: /
     strip_prefix: /cache/
     endpoint: http://minio.minio.svc.cluster.local:9000
     path_style: true
