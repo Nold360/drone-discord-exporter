@@ -7,7 +7,7 @@ steps:
 - name: export
   image: tyrrrz/discordchatexporter
   commands:
-    - export -f Json --media -c 448465157006426113
+    - /bin/bash run.sh
   environment:
     DISCORD_TOKEN:
       from_secret: discord_token
