@@ -23,7 +23,7 @@ steps:
       from_secret: access_key
     secret_key:
       from_secret: secret_key
-    source: /cache/**/*
+    source: /cache/*
     target: /drone
     strip_prefix: /cache/
     endpoint: http://minio.minio.svc.cluster.local:9000
