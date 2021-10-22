@@ -1,0 +1,37 @@
+---
+kind: pipeline
+name: discord-exporter
+type: kubernetes
+
+steps:
+- name: export
+  image: tyrrrz/discordchatexporter
+  commands:
+    - export -f Json --media -c 448465157006426113
+  environment:
+    DISCORD_TOKEN:
+      from_secret: discord_token
+  volumes:
+  - name: cache
+    path: /app/out
+
+- name: upload
+  image: plugins/s3
+  settings:
+    bucket: discord-exporter
+    access_key:
+      from_secret: access_key
+    secret_key:
+      from_secret: secret_key
+    source: /cache/**/*
+    target: /
+    strip_prefix: /cache/
+    endpoint: http://minio.minio.svc.cluster.local:9000
+    path_style: true
+  volumes:
+  - name: cache
+    path: /cache
+
+volumes:
+- name: cache
+  temp: {}
